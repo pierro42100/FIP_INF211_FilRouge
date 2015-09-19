@@ -12,14 +12,13 @@
 -- | Suppression des tables                                                                       |
 -- +----------------------------------------------------------------------------------------------+
 
-drop table if exists "entreprise";
-drop table if exists "offreEmploi";
-drop table if exists "niveauQualif";
-drop table if exists "secteurActivite";
-drop table if exists "offre_secteur";
-drop table if exists "candidature";
-drop table if exists "candidature_secteur";
-
+drop table if exists "offreEmploi" cascade;
+drop table if exists "niveauQualif" cascade;
+drop table if exists "secteurActivite" cascade;
+drop table if exists "offre_secteur" cascade;
+drop table if exists "candidature" cascade;
+drop table if exists "candidature_secteur" cascade;
+drop table if exists "entreprise" cascade;
 
 -- +----------------------------------------------------------------------------------------------+
 -- | Création des tables                                                                          |
@@ -33,21 +32,22 @@ create table "entreprise"
   adresse_postale varchar(30) -- Pour simplifier, adresse_postale = ville.
 );
 
+
+create table "niveauQualif"
+(
+  id              serial primary key,
+  intitule             varchar(50) not null
+);
+
 create table "offreEmploi"
 (
   id              serial primary key,
   titre             varchar(50) not null,
   descriptif_mission      text,
   profil_recherche varchar(150),
-  date_depot date
-  idEntreprise integer not null references entreprise,
-  idQualification integer not null references niveauQualif
-);
-
-create table "niveauQualif"
-(
-  id              serial primary key,
-  intitule             varchar(50) not null
+  date_depot date,
+  idEntreprise integer not null references "entreprise",
+  idQualification integer not null references "niveauQualif"
 );
 
 create table "secteurActivite"
@@ -66,8 +66,8 @@ create table "candidature"
   adresse_postale varchar(30),
   adresse_email varchar(50),
   cv text,
-  date_depot date
-  idQualification integer not null references niveauQualif
+  date_depot date,
+  idQualification integer not null references "niveauQualif"
 );
 
 
@@ -78,15 +78,15 @@ create table "candidature"
 
 create table "offre_secteur"
 (
-  idOffre integer not null references offreEmploi,
-  idSecteur integer not null references secteurActivite
+  idOffre integer not null references "offreEmploi",
+  idSecteur integer not null references "secteurActivite"
 
 );
 
 create table "candidature_secteur"
 (
-  idCandidature integer not null references candidature,
-  idSecteur integer not null references secteurActivite
+  idCandidature integer not null references "candidature",
+  idSecteur integer not null references "secteurActivite"
 );
 
 -- +----------------------------------------------------------------------------------------------+
